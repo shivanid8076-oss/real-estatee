@@ -23,7 +23,7 @@ A premium, interactive real estate landing page designed for luxury property lis
 
 ## 📂 Project Structure
 
-- `prestige_estates_landing.html`: The main landing page with all logic and styles.
+- `index.html`: The main landing page with all logic and styles.
 - `properties.html`: Dedicated properties listing page (complementary).
 
 ## 🖥️ Getting Started
@@ -31,12 +31,12 @@ A premium, interactive real estate landing page designed for luxury property lis
 To run this project locally:
 
 1. Clone or download the repository.
-2. Open `prestige_estates_landing.html` directly in your browser.
+2. Open `index.html` directly in your browser.
    - *Alternatively, run a local server for the best experience:*
      ```bash
      npx serve .
      ```
-3. Visit `http://localhost:3000/prestige_estates_landing.html`.
+3. Visit `http://localhost:3000/index.html`.
 
 ## 📌 Usage - My Plots Section
 
