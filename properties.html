@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Properties | Bala Ji Property</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&family=Jost:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+/* CSS copied from main landing page for consistency */
+:root {
+  --gold:#C9A84C; --gold-l:#E8D5A3; --gold-d:#9B7B2E;
+  --deep:#080807; --dark:#111110; --dark2:#191917; --charcoal:#272723;
+  --muted:#6A6A60; --cream:#F7F3EC; --off-white:#FDFCF9;
+  --glass:rgba(255,255,255,0.05); --glass-b:rgba(255,255,255,0.09);
+  --r:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:'Jost',sans-serif;background:var(--deep);color:var(--off-white);overflow-x:hidden;cursor:none;}
+
+/* ── cursor ── */
+#cur{position:fixed;top:0;left:0;z-index:9999;width:9px;height:9px;background:var(--gold);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);mix-blend-mode:difference;}
+#cur-r{position:fixed;top:0;left:0;z-index:9998;width:36px;height:36px;border:1.5px solid rgba(201,168,76,0.5);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:all .25s cubic-bezier(.16,1,.3,1);}
+
+/* ── nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:300;padding:1.4rem 5%;display:flex;align-items:center;justify-content:space-between;transition:all .4s;background:rgba(8,8,7,.94);backdrop-filter:blur(24px);border-bottom:1px solid rgba(201,168,76,.1);}
+.nav-brand{display:flex;align-items:center;gap:.65rem;text-decoration:none;}
+.nav-logo-box{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold-d));border-radius:5px;display:flex;align-items:center;justify-content:center;}
+.nav-brand-text{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--off-white);}
+.nav-brand-text span{color:var(--gold);}
+.nav-links{display:flex;gap:2.4rem;list-style:none;}
+.nav-links a{font-size:.74rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55);text-decoration:none;transition:color .3s;position:relative;}
+.nav-links a:hover{color:var(--gold);}
+.nav-cta{padding:.6rem 1.5rem;border:1px solid var(--gold);background:transparent;color:var(--gold);font-family:'Jost',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;border-radius:var(--r);text-decoration:none;transition:all .3s;cursor:pointer;}
+.nav-cta:hover{background:var(--gold);color:var(--deep);box-shadow:0 0 24px rgba(201,168,76,.4);}
+
+/* ── properties section styling ── */
+#myplots{padding:8rem 5% 7rem;background:var(--deep);position:relative;min-height:100vh;}
+.plots-admin-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem;}
+.sec-tag{font-size:.64rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:.55rem;}
+.sec-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.4vw,2.8rem);font-weight:700;line-height:1.2;color:var(--off-white);}
+.sec-title em{font-style:italic;color:var(--gold);}
+
+.add-plot-btn{
+  display:inline-flex;align-items:center;gap:.55rem;padding:.7rem 1.6rem;
+  background:linear-gradient(135deg,var(--gold),var(--gold-d));border:none;border-radius:var(--r);
+  color:var(--deep);font-family:'Jost',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s;
+}
+.add-plot-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.4);}
+
+.plots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1rem;}
+.plot-card{background:var(--glass);border:1px solid var(--glass-b);backdrop-filter:blur(20px);border-radius:14px;overflow:hidden;transition:all .4s ease;position:relative;}
+.plot-card:hover{transform:translateY(-8px);box-shadow:0 28px 70px rgba(0,0,0,.5);border-color:rgba(201,168,76,.28);}
+.plot-img{position:relative;overflow:hidden;aspect-ratio:16/9;background:#111;}
+.plot-img img, .plot-img video {width:100%;height:100%;object-fit:cover;filter:brightness(.88);transition:transform .55s;}
+.plot-card:hover .plot-img img, .plot-card:hover .plot-img video {transform:scale(1.06);}
+.plot-badge{position:absolute;top:.8rem;left:.8rem;padding:.24rem .65rem;border-radius:4px;font-size:.59rem;font-weight:700;background:var(--gold);color:var(--deep);text-transform:uppercase;}
+.plot-body{padding:1.2rem;}
+.plot-price{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--gold-l);margin-bottom:.22rem;}
+.plot-name{font-size:.87rem;font-weight:500;color:var(--off-white);margin-bottom:.35rem;}
+.plot-loc{display:flex;align-items:center;gap:.28rem;font-size:.73rem;color:rgba(255,255,255,.38);margin-bottom:.85rem;}
+.plot-specs{display:flex;gap:1rem;flex-wrap:wrap;padding:.75rem 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:.85rem;}
+.plot-spec{display:flex;align-items:center;gap:.28rem;font-size:.72rem;color:rgba(255,255,255,.48);}
+.plot-desc{font-size:.76rem;color:rgba(255,255,255,.4);line-height:1.65;margin-bottom:.9rem;}
+.plot-actions{display:flex;gap:.55rem;}
+.plot-enquire-btn{flex:1;padding:.58rem;background:linear-gradient(135deg,var(--gold),var(--gold-d));border:none;border-radius:var(--r);color:var(--deep);font-size:.72rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.3rem;text-transform:uppercase;}
+.plot-del-btn{width:33px;height:33px;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;color:rgba(231,76,60,.6);cursor:pointer;}
+.plot-edit-btn{width:33px;height:33px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.38);cursor:pointer;}
+.plot-edit-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:2rem;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#111110;border:1px solid rgba(201,168,76,.2);border-radius:16px;padding:2rem;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;position:relative;}
+.modal-close{position:absolute;top:1rem;right:1rem;background:transparent;border:none;color:#555;cursor:pointer;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:.4rem;}
+.modal-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem;}
+.pf{margin-bottom:1rem;}
+.pf label{display:block;font-size:.65rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;}
+.pf input,.pf textarea,.pf select{width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);color:#fff;font-family:'Jost',sans-serif;outline:none;}
+.pf input:focus{border-color:var(--gold);}
+.pf-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.modal-save-btn{width:100%;padding:1rem;background:linear-gradient(135deg,var(--gold),var(--gold-d));border:none;border-radius:var(--r);color:var(--deep);font-weight:700;text-transform:uppercase;cursor:pointer;margin-top:1rem;}
+
+.plots-empty{grid-column:1/-1;text-align:center;padding:5rem 2rem;border:1.5px dashed rgba(255,255,255,0.1);border-radius:14px;color:rgba(255,255,255,0.3);}
+
+@media(max-width:1024px){.plots-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:640px){.plots-grid{grid-template-columns:1fr;}.pf-row{grid-template-columns:1fr;}}
+
+/* Ham Menu */
+.ham-btn{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:.4rem;}
+.ham-btn span{display:block;width:24px;height:2px;background:var(--gold);border-radius:2px;}
+@media(max-width:768px){.ham-btn{display:flex;}.nav-links,.nav-cta{display:none;}}
+
+.mobile-nav{display:none;position:fixed;top:60px;left:0;right:0;z-index:299;background:rgba(8,8,7,.97);backdrop-filter:blur(24px);padding:1.2rem 4%;flex-direction:column;gap:.8rem;border-bottom:1px solid rgba(201,168,76,0.1);}
+.mobile-nav.open{display:flex;}
+.mobile-nav a{text-decoration:none;color:#fff;font-size:.9rem;text-transform:uppercase;padding:.5rem 0;}
+
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-brand" href="prestige_estates_landing.html">
+    <div class="nav-logo-box">
+      <i data-lucide="home" style="width:17px;height:17px;color:#080807"></i>
+    </div>
+    <span class="nav-brand-text">Bala Ji<span> Property</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="prestige_estates_landing.html#about">About</a></li>
+    <li><a href="#" style="color:var(--gold)">Properties</a></li>
+    <li><a href="prestige_estates_landing.html#contact">Contact</a></li>
+  </ul>
+  <a class="nav-cta" href="prestige_estates_landing.html#contact">Book Consultation</a>
+  <button class="ham-btn" id="hamBtn" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="prestige_estates_landing.html#about" onclick="closeMobileNav()">About</a>
+  <a href="#" onclick="closeMobileNav()">Properties</a>
+  <a href="prestige_estates_landing.html#contact" onclick="closeMobileNav()">Contact</a>
+</div>
+
+<!-- PROPERTIES CONTENT -->
+<section id="myplots">
+  <div class="plots-admin-bar">
+    <div>
+      <p class="sec-tag">Exclusive Portfolio</p>
+      <h2 class="sec-title">All <em>Plots & Properties</em></h2>
+    </div>
+    <button class="add-plot-btn" onclick="openAddPlot()">
+      <i data-lucide="plus-circle" style="width:16px;height:16px"></i>
+      Add New Property
+    </button>
+  </div>
+
+  <div class="plots-grid" id="plotsGrid">
+    <div class="plots-empty" id="plotsEmpty">
+      <div class="plots-empty-icon" style="margin-bottom:1rem; opacity:0.5">
+        <i data-lucide="map" style="width:40px;height:40px"></i>
+      </div>
+      <h3>Your portfolio is empty</h3>
+      <p>Click "Add New Property" to showcase your listings here.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="plotModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closePlotModal()">
+      <i data-lucide="x" style="width:20px;height:20px"></i>
+    </button>
+    <div class="modal-title" id="modalTitle">Add Property</div>
+    <div class="modal-sub">Details will be saved to your local storage.</div>
+
+    <div class="pf">
+      <label>Photo URL</label>
+      <input type="url" id="pImgUrl" placeholder="https://image-link.com/photo.jpg" oninput="previewImg(this.value)"/>
+    </div>
+
+    <!-- NEW: Video URL -->
+    <div class="pf">
+      <label>Video URL (Optional - Direct link or YouTube)</label>
+      <input type="url" id="pVideoUrl" placeholder="https://video-link.mp4 or YouTube link"/>
+    </div>
+
+    <div class="pf-row">
+      <div class="pf">
+        <label>Property Name *</label>
+        <input type="text" id="pName" placeholder="e.g. Royal Heights Plot A1"/>
+      </div>
+      <div class="pf">
+        <label>Price *</label>
+        <input type="text" id="pPrice" placeholder="e.g. ₹50 Lakh"/>
+      </div>
+    </div>
+
+    <div class="pf-row">
+      <div class="pf">
+        <label>Location *</label>
+        <input type="text" id="pLocation" placeholder="e.g. Sector 62, Gurgaon"/>
+      </div>
+      <div class="pf">
+        <label>Area</label>
+        <input type="text" id="pArea" placeholder="e.g. 500 Sq.Yd"/>
+      </div>
+    </div>
+
+    <div class="pf-row">
+      <div class="pf">
+        <label>Type</label>
+        <select id="pType">
+          <option>Residential Plot</option>
+          <option>Commercial Plot</option>
+          <option>Villa</option>
+          <option>Apartment</option>
+        </select>
+      </div>
+      <div class="pf">
+        <label>Status</label>
+        <select id="pStatus">
+          <option>For Sale</option>
+          <option>Sold Out</option>
+          <option>New Launch</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="pf">
+      <label>Description</label>
+      <textarea id="pDesc" rows="3" placeholder="Additional details..."></textarea>
+    </div>
+
+    <input type="hidden" id="editPlotId" value=""/>
+    <button class="modal-save-btn" onclick="savePlot()">Save Property</button>
+  </div>
+</div>
+
+<script>
+// --- CURSOR ---
+const cur = document.getElementById('cur');
+const curR = document.getElementById('cur-r');
+document.addEventListener('mousemove', e => {
+  gsap.to(cur, {x:e.clientX, y:e.clientY, duration:0.1});
+  gsap.to(curR, {x:e.clientX, y:e.clientY, duration:0.3});
+});
+
+// --- MOBILE NAV ---
+function toggleMobileNav(){
+  document.getElementById('hamBtn').classList.toggle('open');
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+function closeMobileNav(){
+  document.getElementById('hamBtn').classList.remove('open');
+  document.getElementById('mobileNav').classList.remove('open');
+}
+
+// --- CMS LOGIC ---
+let plots = JSON.parse(localStorage.getItem('rishi_plots') || '[]');
+
+function renderPlots() {
+  const grid = document.getElementById('plotsGrid');
+  const empty = document.getElementById('plotsEmpty');
+  grid.querySelectorAll('.plot-card').forEach(c => c.remove());
+
+  if (plots.length === 0) {
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  plots.forEach((p, idx) => {
+    const card = document.createElement('div');
+    card.className = 'plot-card';
+    
+    // Check if video is present
+    let mediaHtml = '';
+    if (p.video && p.video.includes('youtube.com')) {
+       const vidId = p.video.split('v=')[1]?.split('&')[0];
+       mediaHtml = `<iframe src="https://www.youtube.com/embed/${vidId}" frameborder="0" style="width:100%;height:100%;pointer-events:none"></iframe>`;
+    } else if (p.video) {
+       mediaHtml = `<video src="${p.video}" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>`;
+    } else if (p.img) {
+       mediaHtml = `<img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">`;
+    } else {
+       mediaHtml = `<div style="width:100%;height:100%;background:#222;display:flex;align-items:center;justify-content:center"><i data-lucide="image" style="color:#444"></i></div>`;
+    }
+
+    card.innerHTML = `
+      <div class="plot-img">
+        ${mediaHtml}
+        <span class="plot-badge">${p.status || 'For Sale'}</span>
+      </div>
+      <div class="plot-body">
+        <div class="plot-price">${p.price || 'Contact for Price'}</div>
+        <div class="plot-name">${p.name}</div>
+        <div class="plot-loc"><i data-lucide="map-pin" style="width:12px;height:12px;color:var(--gold)"></i> ${p.location}</div>
+        <div class="plot-specs">
+          <div class="plot-spec"><i data-lucide="maximize-2" style="width:12px;height:12px"></i> ${p.area || 'N/A'}</div>
+          <div class="plot-spec"><i data-lucide="layers" style="width:12px;height:12px"></i> ${p.type}</div>
+        </div>
+        <div class="plot-desc">${p.desc || ''}</div>
+        <div class="plot-actions">
+          <button class="plot-enquire-btn" onclick="enquirePlot('${p.name}')">Enquire Now</button>
+          <button class="plot-edit-btn" onclick="editPlot(${idx})"><i data-lucide="pencil" style="width:14px;height:14px"></i></button>
+          <button class="plot-del-btn" onclick="deletePlot(${idx})"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
+        </div>
+      </div>
+    `;
+    grid.insertBefore(card, empty);
+  });
+  if (window.lucide) lucide.createIcons();
+}
+
+function openAddPlot() {
+  document.getElementById('modalTitle').textContent = 'Add Property';
+  resetModal();
+  document.getElementById('plotModal').classList.add('open');
+}
+
+function resetModal() {
+  document.getElementById('pImgUrl').value = '';
+  document.getElementById('pVideoUrl').value = '';
+  document.getElementById('pName').value = '';
+  document.getElementById('pPrice').value = '';
+  document.getElementById('pLocation').value = '';
+  document.getElementById('pArea').value = '';
+  document.getElementById('pDesc').value = '';
+  document.getElementById('editPlotId').value = '';
+}
+
+function editPlot(idx) {
+  const p = plots[idx];
+  document.getElementById('modalTitle').textContent = 'Edit Property';
+  document.getElementById('pImgUrl').value = p.img || '';
+  document.getElementById('pVideoUrl').value = p.video || '';
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pPrice').value = p.price;
+  document.getElementById('pLocation').value = p.location;
+  document.getElementById('pArea').value = p.area;
+  document.getElementById('pDesc').value = p.desc || '';
+  document.getElementById('editPlotId').value = idx;
+  document.getElementById('plotModal').classList.add('open');
+}
+
+function closePlotModal() {
+  document.getElementById('plotModal').classList.remove('open');
+}
+
+function savePlot() {
+  const name = document.getElementById('pName').value.trim();
+  if (!name) { alert('Name is required'); return; }
+
+  const plot = {
+    name,
+    price: document.getElementById('pPrice').value,
+    location: document.getElementById('pLocation').value,
+    area: document.getElementById('pArea').value,
+    type: document.getElementById('pType').value,
+    status: document.getElementById('pStatus').value,
+    img: document.getElementById('pImgUrl').value,
+    video: document.getElementById('pVideoUrl').value,
+    desc: document.getElementById('pDesc').value
+  };
+
+  const editId = document.getElementById('editPlotId').value;
+  if (editId !== '') {
+    plots[parseInt(editId)] = plot;
+  } else {
+    plots.unshift(plot);
+  }
+
+  localStorage.setItem('rishi_plots', JSON.stringify(plots));
+  renderPlots();
+  closePlotModal();
+}
+
+function deletePlot(idx) {
+  if (confirm('Delete this listing?')) {
+    plots.splice(idx, 1);
+    localStorage.setItem('rishi_plots', JSON.stringify(plots));
+    renderPlots();
+  }
+}
+
+function enquirePlot(name) {
+  window.open('https://wa.me/919899271909?text=' + encodeURIComponent('Interested in: ' + name), '_blank');
+}
+
+function previewImg(url) {} // No-op for this simple version
+
+window.onload = () => {
+  renderPlots();
+  if (window.lucide) lucide.createIcons();
+};
+
+</script>
+</body>
+</html>
