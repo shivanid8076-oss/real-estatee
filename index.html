@@ -367,6 +367,39 @@ footer p{font-size:.69rem;color:rgba(255,255,255,.22);letter-spacing:.06em;}
 .modal-box::-webkit-scrollbar{width:4px;}
 .modal-box::-webkit-scrollbar-track{background:transparent;}
 .modal-box::-webkit-scrollbar-thumb{background:rgba(201,168,76,.3);border-radius:4px;}
+
+/* File Upload Styling */
+.pf-file-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1.5px dashed rgba(201,168,76,0.3);
+  border-radius: var(--r);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.8rem;
+  justify-content: center;
+}
+.pf-file-label:hover {
+  background: rgba(201,168,76,0.05);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.pf-file-label i { width: 18px; height: 18px; }
+.pf input[type="file"] { display: none; }
+.file-name-display {
+  font-size: 0.7rem;
+  color: var(--gold-l);
+  margin-top: 0.4rem;
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+}
 .modal-title{
   font-family:'Playfair Display',serif;font-size:1.5rem;
   font-weight:700;color:var(--off-white);margin-bottom:.3rem;
@@ -854,17 +887,23 @@ footer p{font-size:.69rem;color:rgba(255,255,255,.22);letter-spacing:.06em;}
     <div class="modal-title" id="modalTitle">Add New Plot</div>
     <div class="modal-sub">Fill in the details — yeh sab website pe show hoga</div>
 
-    <!-- Image preview & URL -->
+    <!-- Image preview & Upload -->
     <div class="pf">
-      <label>Plot / Property Photo URL</label>
-      <input type="url" id="pImgUrl" placeholder="https://your-image-link.com/photo.jpg" oninput="previewImg(this.value)"/>
+      <label>Plot / Property Photo</label>
+      <label for="pImgFile" class="pf-file-label">
+        <i data-lucide="upload-cloud"></i>
+        <span>Choose Photo / Photo Select Karein</span>
+      </label>
+      <input type="file" id="pImgFile" accept="image/*" onchange="processFile(this, 'img')"/>
+      <span id="pImgName" class="file-name-display">No file chosen</span>
+      <input type="hidden" id="pImgData" value=""/>
     </div>
-    <div class="img-preview-wrap" id="imgPreviewWrap" onclick="document.getElementById('pImgUrl').focus()">
+    <div class="img-preview-wrap" id="imgPreviewWrap" onclick="document.getElementById('pImgFile').click()">
       <img id="imgPreview" src="" alt="Preview"/>
       <div class="img-preview-hint" id="imgHint">
         <i data-lucide="image" style="width:32px;height:32px;color:rgba(201,168,76,0.35)"></i>
-        <p>Image URL dalein — preview yahan dikhega</p>
-        <small>Unsplash, Google Drive, or any direct image link</small>
+        <p>Preview yahan dikhega</p>
+        <small>Directly upload from your device</small>
       </div>
     </div>
 
@@ -924,8 +963,14 @@ footer p{font-size:.69rem;color:rgba(255,255,255,.22);letter-spacing:.06em;}
       <textarea id="pDesc" rows="3" placeholder="Plot ki khas baatein likhein — location, connectivity, features..."></textarea>
     </div>
     <div class="pf">
-      <label>Property Video URL (YouTube or Direct Link)</label>
-      <input type="url" id="pVideoUrl" placeholder="https://www.youtube.com/watch?v=..."/>
+      <label>Property Video (Direct Upload)</label>
+      <label for="pVideoFile" class="pf-file-label">
+        <i data-lucide="video"></i>
+        <span>Choose Video / Video Select Karein</span>
+      </label>
+      <input type="file" id="pVideoFile" accept="video/*" onchange="processFile(this, 'video')"/>
+      <span id="pVideoName" class="file-name-display">No file chosen</span>
+      <input type="hidden" id="pVideoData" value=""/>
     </div>
 
     <input type="hidden" id="editPlotId" value=""/>
@@ -1230,17 +1275,10 @@ function renderPlots() {
 function openAddPlot() {
   document.getElementById('modalTitle').textContent = 'Add New Plot';
   document.getElementById('saveLabel').textContent = 'Save & Publish Plot';
-  document.getElementById('pImgUrl').value = '';
-  document.getElementById('pName').value = '';
-  document.getElementById('pPrice').value = '';
-  document.getElementById('pLocation').value = '';
-  document.getElementById('pArea').value = '';
-  document.getElementById('pType').value = '';
-  document.getElementById('pStatus').value = 'For Sale';
-  document.getElementById('pMaps').value = '';
-  document.getElementById('pVideoUrl').value = '';
-  document.getElementById('pDesc').value = '';
-  document.getElementById('editPlotId').value = '';
+  document.getElementById('pImgData').value = '';
+  document.getElementById('pVideoData').value = '';
+  document.getElementById('pImgName').textContent = 'No file chosen';
+  document.getElementById('pVideoName').textContent = 'No file chosen';
   document.getElementById('imgPreview').style.display = 'none';
   document.getElementById('imgHint').style.display = 'block';
   const modal = document.getElementById('plotModal');
@@ -1252,7 +1290,6 @@ function editPlot(idx) {
   const p = plots[idx];
   document.getElementById('modalTitle').textContent = 'Edit Plot';
   document.getElementById('saveLabel').textContent = 'Update Plot';
-  document.getElementById('pImgUrl').value = p.img || '';
   document.getElementById('pName').value = p.name || '';
   document.getElementById('pPrice').value = p.price || '';
   document.getElementById('pLocation').value = p.location || '';
@@ -1260,7 +1297,10 @@ function editPlot(idx) {
   document.getElementById('pType').value = p.type || '';
   document.getElementById('pStatus').value = p.status || 'For Sale';
   document.getElementById('pMaps').value = p.maps || '';
-  document.getElementById('pVideoUrl').value = p.video || '';
+  document.getElementById('pImgData').value = p.img || '';
+  document.getElementById('pVideoData').value = p.video || '';
+  document.getElementById('pImgName').textContent = p.img ? 'Current Image' : 'No file chosen';
+  document.getElementById('pVideoName').textContent = p.video ? 'Current Video' : 'No file chosen';
   document.getElementById('pDesc').value = p.desc || '';
   document.getElementById('editPlotId').value = idx;
   previewImg(p.img);
@@ -1297,6 +1337,26 @@ function previewImg(url) {
   }
 }
 
+function processFile(input, type) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const fileNameDisplay = type === 'img' ? 'pImgName' : 'pVideoName';
+  document.getElementById(fileNameDisplay).textContent = file.name;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64 = e.target.result;
+    if (type === 'img') {
+      document.getElementById('pImgData').value = base64;
+      previewImg(base64);
+    } else {
+      document.getElementById('pVideoData').value = base64;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
 function savePlot() {
   const name = document.getElementById('pName').value.trim();
   const price = document.getElementById('pPrice').value.trim();
@@ -1311,9 +1371,9 @@ function savePlot() {
     area:     document.getElementById('pArea').value.trim(),
     type:     document.getElementById('pType').value,
     status:   document.getElementById('pStatus').value,
-    img:      document.getElementById('pImgUrl').value.trim(),
+    img:      document.getElementById('pImgData').value,
     maps:     document.getElementById('pMaps').value.trim(),
-    video:    document.getElementById('pVideoUrl').value.trim(),
+    video:    document.getElementById('pVideoData').value,
     desc:     document.getElementById('pDesc').value.trim(),
     added:    new Date().toLocaleDateString('en-IN'),
   };

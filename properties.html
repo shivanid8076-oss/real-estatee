@@ -90,6 +90,39 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;padding:1.4rem 5%;display:fl
 
 .plots-empty{grid-column:1/-1;text-align:center;padding:5rem 2rem;border:1.5px dashed rgba(255,255,255,0.1);border-radius:14px;color:rgba(255,255,255,0.3);}
 
+/* File Upload Styling */
+.pf-file-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1.5px dashed rgba(201,168,76,0.3);
+  border-radius: var(--r);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.8rem;
+  justify-content: center;
+}
+.pf-file-label:hover {
+  background: rgba(201,168,76,0.05);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.pf-file-label i { width: 18px; height: 18px; }
+.pf input[type="file"] { display: none; }
+.file-name-display {
+  font-size: 0.7rem;
+  color: var(--gold-l);
+  margin-top: 0.4rem;
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+}
+
 
 
 .mobile-nav{
@@ -213,14 +246,25 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;padding:1.4rem 5%;display:fl
     <div class="modal-sub">Details will be saved to your local storage.</div>
 
     <div class="pf">
-      <label>Photo URL</label>
-      <input type="url" id="pImgUrl" placeholder="https://image-link.com/photo.jpg" oninput="previewImg(this.value)"/>
+      <label>Property Photo</label>
+      <label for="pImgFile" class="pf-file-label">
+        <i data-lucide="upload-cloud"></i>
+        <span>Choose Photo</span>
+      </label>
+      <input type="file" id="pImgFile" accept="image/*" onchange="processFile(this, 'img')"/>
+      <span id="pImgName" class="file-name-display">No file chosen</span>
+      <input type="hidden" id="pImgData" value=""/>
     </div>
 
-    <!-- NEW: Video URL -->
     <div class="pf">
-      <label>Video URL (Optional - Direct link or YouTube)</label>
-      <input type="url" id="pVideoUrl" placeholder="https://video-link.mp4 or YouTube link"/>
+      <label>Property Video (Direct Upload)</label>
+      <label for="pVideoFile" class="pf-file-label">
+        <i data-lucide="video"></i>
+        <span>Choose Video</span>
+      </label>
+      <input type="file" id="pVideoFile" accept="video/*" onchange="processFile(this, 'video')"/>
+      <span id="pVideoName" class="file-name-display">No file chosen</span>
+      <input type="hidden" id="pVideoData" value=""/>
     </div>
 
     <div class="pf-row">
@@ -358,8 +402,10 @@ function openAddPlot() {
 }
 
 function resetModal() {
-  document.getElementById('pImgUrl').value = '';
-  document.getElementById('pVideoUrl').value = '';
+  document.getElementById('pImgData').value = '';
+  document.getElementById('pVideoData').value = '';
+  document.getElementById('pImgName').textContent = 'No file chosen';
+  document.getElementById('pVideoName').textContent = 'No file chosen';
   document.getElementById('pName').value = '';
   document.getElementById('pPrice').value = '';
   document.getElementById('pLocation').value = '';
@@ -371,8 +417,10 @@ function resetModal() {
 function editPlot(idx) {
   const p = plots[idx];
   document.getElementById('modalTitle').textContent = 'Edit Property';
-  document.getElementById('pImgUrl').value = p.img || '';
-  document.getElementById('pVideoUrl').value = p.video || '';
+  document.getElementById('pImgData').value = p.img || '';
+  document.getElementById('pVideoData').value = p.video || '';
+  document.getElementById('pImgName').textContent = p.img ? 'Current Image' : 'No file chosen';
+  document.getElementById('pVideoName').textContent = p.video ? 'Current Video' : 'No file chosen';
   document.getElementById('pName').value = p.name;
   document.getElementById('pPrice').value = p.price;
   document.getElementById('pLocation').value = p.location;
@@ -397,8 +445,8 @@ function savePlot() {
     area: document.getElementById('pArea').value,
     type: document.getElementById('pType').value,
     status: document.getElementById('pStatus').value,
-    img: document.getElementById('pImgUrl').value,
-    video: document.getElementById('pVideoUrl').value,
+    img: document.getElementById('pImgData').value,
+    video: document.getElementById('pVideoData').value,
     desc: document.getElementById('pDesc').value
   };
 
@@ -427,6 +475,25 @@ function enquirePlot(name) {
 }
 
 function previewImg(url) {} // No-op for this simple version
+
+function processFile(input, type) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const fileNameDisplay = type === 'img' ? 'pImgName' : 'pVideoName';
+  document.getElementById(fileNameDisplay).textContent = file.name;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64 = e.target.result;
+    if (type === 'img') {
+      document.getElementById('pImgData').value = base64;
+    } else {
+      document.getElementById('pVideoData').value = base64;
+    }
+  };
+  reader.readAsDataURL(file);
+}
 
 window.onload = () => {
   renderPlots();
